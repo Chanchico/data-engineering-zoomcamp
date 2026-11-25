@@ -47,3 +47,9 @@ When I say the session is over (or when I ask you to), update `exos/progression.
 - status of the common thread project.
 
 Only edit `progression.md` and files in `exos/`. Never touch upstream course files.
+
+## Answering my questions
+
+- When I ask a direct question, answer only that question, staying strictly within its scope.
+- Do not add project context, background, consequences, warnings, or next steps unless I ask for them.
+- Give the minimal direct answer. Example: if I ask how to run a Docker image, answer with the command only (e.g. `docker compose run <service>`), nothing more.
