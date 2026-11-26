@@ -17,16 +17,16 @@
 - Progress display with `tqdm` (`tqdm.auto`, `total` needed for a real bar)
 
 ## Weak points to revisit
-- Name the mechanism, not only the intuition (why `DtypeWarning`, why chunks: client RAM, single transaction).
-- Idempotence: say *why* (table recreated with `replace`), not "same result each time". Also not atomic.
-- Skipped small requirements in ex-002: total rows inserted not printed, URL not built with an f-string, file name not in a variable, `to_sql` written twice (`if i == 0`).
-- Verify with `\d` in pgcli and write the expected count before running (ex-001).
+- **Explaining "why"**: when asked why something happens, describe what the tool actually does. Example: `DtypeWarning` happens because pandas guesses the type of each internal block of the file separately, and the blocks disagree. "It can cause a problem" is not enough.
+- **Idempotence**: running twice must give the same table. Here it works because `replace` drops and recreates the table at the start. Without it, `append` would double the rows. "It gives the same result" is not an explanation.
+- **Read the whole statement before saying done**: in ex-002 two requirements were forgotten (print the total rows inserted, build the URL with an f-string). Tick each acceptance criterion one by one.
+- **Check, don't assume**: write the expected row count before running, then check the table schema with `\d yellow_taxi_data` in pgcli (ex-001 had a `COUNT(*)` instead).
 
 ## Exercises done
 | # | Module | Topic | Result |
 |---|--------|-------|--------|
 | 001 | 01 | Why chunks, why explicit types (concept) | Partial: good intuitions, `head(0)` misunderstood, `\d` output missing |
-| 002 | 01 | Fix the ingestion loop (code) | Validated by user. Exhausted-iterator bug found, `index=False`, idempotent, `tqdm`. Minor points left (see weak points) |
+| 002 | 01 | Fix the ingestion loop (code) | Validated. Bug found, `index=False`, idempotent, `tqdm`, no duplicated `to_sql`, total rows checked against `COUNT(*)`, f-string URL. Minor: total printed inside the loop instead of at the end |
 | 003 | 01 | Verify ingestion (hands-on) | Generated, not done yet |
 
 ## Common thread project
