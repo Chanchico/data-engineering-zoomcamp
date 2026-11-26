@@ -48,6 +48,14 @@ When I say the session is over (or when I ask you to), update `exos/progression.
 
 Only edit `progression.md` and files in `exos/`. Never touch upstream course files.
 
+## Setup guide (`setup.md`)
+
+- `setup.md` at the repo root explains how to rebuild my environment from scratch.
+- Whenever I ask you to, update it incrementally with the configuration added since the last update (new dependencies, env vars, Docker commands, VS Code / Git settings…).
+- Base it on what is actually in the repo (`pyproject.toml`, `.env.example`, `.vscode/`, `practice/`), not only on the tutorial. Flag gaps (e.g. a package imported but missing from `pyproject.toml`).
+- Keep the existing structure: append a new section per course section, and update the "Covers … up to" line at the top.
+- `setup.md` is the only file outside `exos/` you may edit for this purpose.
+
 ## Answering my questions
 
 - When I ask a direct question, answer only that question, staying strictly within its scope.
