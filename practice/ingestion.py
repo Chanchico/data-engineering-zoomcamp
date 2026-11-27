@@ -19,7 +19,7 @@ db_name = os.environ["DB_NAME"]
 db_pw = os.environ["DB_PASSWORD"]
 db_us = os.environ["DB_USERNAME"]
 
-data_path = os.environ["URL"] + os.environ["DATA"]
+data_path = os.environ["URL"]
 
 @click.command()
 @click.option('--pg-user', default=db_us, help='PostgreSQL user')
@@ -28,13 +28,15 @@ data_path = os.environ["URL"] + os.environ["DATA"]
 @click.option('--pg-port', default=db_port, type=int, help='PostgreSQL port')
 @click.option('--pg-db', default=db_name, help='PostgreSQL database name')
 @click.option('--target-table', default=os.environ["DATA"], help='Target table name')
+@click.option('--year', default=2021, type=int, help='Year of the data')
+@click.option('--month', default=1, type=int, help='Month of the data')
+@click.option('--chunksize', default=100000, type=int, help='Chunk size for reading CSV')
 
-
-def run(pg_user, pg_pass, pg_host, pg_port, pg_db, target_table):
+def run(pg_user, pg_pass, pg_host, pg_port, pg_db, year, month, target_table, chunksize):
     """Ingest NYC taxi data into PostgreSQL database."""
 
-
-    engine = create_engine(f'postgresql+psycopg://{db_us}:{db_pw}@{db_host}:{db_port}/{db_name}')
+    url = f'{data_path}yellow_tripdata_{year}-{month:02d}.csv.gz'
+    engine = create_engine(f'postgresql+psycopg://{pg_user}:{pg_pass}@{pg_host}:{pg_port}/{pg_db}')
     # Read a sample of the data
     dtype = {
         "VendorID": "Int64",
@@ -61,17 +63,17 @@ def run(pg_user, pg_pass, pg_host, pg_port, pg_db, target_table):
     ]
 
     df_iter = pd.read_csv(
-        data_path,
+        url,
         dtype=dtype,
         parse_dates=parse_dates,
         iterator=True,
-        chunksize=100000,
+        chunksize=chunksize,
     )
     total_rows = 0
     for i, df_chunk in enumerate(tqdm(df_iter, desc="Ingestion progression")):
 
         mode = "replace" if i == 0 else "append"
-        df_chunk.to_sql(name="yellow_taxi_data", con=engine, if_exists=mode, index=False)
+        df_chunk.to_sql(name=target_table, con=engine, if_exists=mode, index=False)
         total_rows += len(df_chunk)
         print("Inserted:", total_rows)
 
