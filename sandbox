@@ -1,0 +1,5 @@
+from sandbox2 import faah
+print(type(__name__))
+print(__name__ == "__main__")
+
+faah()
